@@ -18,10 +18,11 @@ All features from `sandbox` package is supported.
 
 ## Useful links
 
-| Name                                                   | Link                                                       |
-|--------------------------------------------------------|------------------------------------------------------------|
-| Doc for rules from Mozilla                             | https://wiki.mozilla.org/Sandbox/OS_X_Rule_Set             |
-| Caveats from Lucas Wiman on `Sandboxing code on MacOS` | https://lucaswiman.github.io/2023/06/04/macos-sandbox.html |
+| Name                                                   | Link                                                                           |
+|--------------------------------------------------------|--------------------------------------------------------------------------------|
+| Doc for rules from Mozilla                             | https://wiki.mozilla.org/Sandbox/OS_X_Rule_Set                                 |
+| Caveats from Lucas Wiman on `Sandboxing code on MacOS` | https://lucaswiman.github.io/2023/06/04/macos-sandbox.html                     |
+| Apple's Sandbox Guide                                  | https://reverse.put.as/wp-content/uploads/2011/09/Apple-Sandbox-Guide-v1.0.pdf |
 
 ## Testing
 
