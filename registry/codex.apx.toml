@@ -1,0 +1,10 @@
+name = "codex"
+
+[[sandboxes]]
+type = "seatbelt"
+policy.fs.roPaths = [
+    "/Users/vadim.makerov/.codex"
+]
+policy.fs.rwPaths = [
+    "/Users/vadim.makerov/.codex"
+]

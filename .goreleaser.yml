@@ -1,0 +1,67 @@
+version: 2
+
+project_name: apx
+
+before:
+  hooks:
+    - mise test
+
+builds:
+  - id: apx
+    main: ./cmd/apx
+    binary: apx
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/UsingCoding/apx/cmd/apx.Version={{.RawVersion}}
+      - -X github.com/UsingCoding/apx/cmd/apx.Commit={{.Commit}}
+
+brews:
+  - name: apx
+    description: "CLI wrapper for platform-specific sandboxes"
+    homepage: "https://github.com/UsingCoding/apx"
+    repository:
+      owner: UsingCoding
+      name: homebrew-public
+
+archives:
+  - format: tar.gz
+    # Use zip for Windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE*
+      - README*
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+      - '^version-increment:'
+
+release:
+  github:
+    owner: UsingCoding
+    name: apx
