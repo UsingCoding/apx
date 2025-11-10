@@ -2,6 +2,7 @@ package app
 
 import (
 	"io/fs"
+	"os"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
@@ -24,9 +25,26 @@ type Sandbox struct {
 
 func decode(src fs.FS, p string) (apx APXTOML, err error) {
 	_, err = toml.DecodeFS(src, p, &apx)
-	return apx, errors.Wrap(err, "error decoding APXTOML")
+	if err != nil {
+		return APXTOML{}, errors.Wrap(err, "error decoding APXTOML")
+	}
+	apx = expandPaths(apx)
+	return apx, err
 }
 
 func matcher(p string) (matched bool, err error) {
 	return filepath.Match("*.apx.toml", p)
+}
+
+func expandPaths(apx APXTOML) APXTOML {
+	for _, s := range apx.Sandboxes {
+		for i, p := range s.Policy.Filesystem.ROPaths {
+			s.Policy.Filesystem.ROPaths[i] = os.ExpandEnv(p)
+		}
+		for i, p := range s.Policy.Filesystem.RWPaths {
+			s.Policy.Filesystem.RWPaths[i] = os.ExpandEnv(p)
+		}
+	}
+
+	return apx
 }
