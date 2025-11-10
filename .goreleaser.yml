@@ -20,10 +20,10 @@ builds:
       - arm64
     ldflags:
       - -s -w
-      - -X github.com/UsingCoding/apx/cmd/apx.Version={{.RawVersion}}
-      - -X github.com/UsingCoding/apx/cmd/apx.Commit={{.Commit}}
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
 
-brews:
+homebrew_casks:
   - name: apx
     description: "CLI wrapper for platform-specific sandboxes"
     homepage: "https://github.com/UsingCoding/apx"
@@ -32,12 +32,7 @@ brews:
       name: homebrew-public
 
 archives:
-  - format: tar.gz
-    # Use zip for Windows archives
-    format_overrides:
-      - goos: windows
-        format: zip
-    files:
+  - files:
       - LICENSE*
       - README*
     name_template: >-
