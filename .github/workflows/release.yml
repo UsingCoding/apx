@@ -24,9 +24,8 @@ jobs:
           fetch-depth: 0  # needed for GoReleaser to find tags
 
       - name: Set up mise
-        uses: jdx/mise-action@v2
-        with:
-          version: latest
+        run: |
+          curl https://mise.run | sh
 
       - name: Install tools via mise
         run: mise i
