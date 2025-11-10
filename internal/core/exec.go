@@ -30,7 +30,7 @@ func (e Exec) Do(ctx context.Context) error {
 
 	sndbox, ok := sandbox.R.Lookup(s.Type)
 	if !ok {
-		return errors.Errorf("sandbox %s for %s not found", s.Type, argv0)
+		return errors.Errorf("sandbox %q for %q not found", s.Type, argv0)
 	}
 
 	return sndbox.Exec(ctx, e.CMD, s.Policy, e.Logger)

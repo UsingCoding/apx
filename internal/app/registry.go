@@ -16,7 +16,7 @@ func (r Registry) Find(id string) (APXTOML, error) {
 			return app, nil
 		}
 	}
-	return APXTOML{}, errors.Errorf("app %s not found", id)
+	return APXTOML{}, errors.Errorf("app %q not found", id)
 }
 
 func LoadRegistry(sources []fs.FS) (Registry, error) {
