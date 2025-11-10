@@ -32,6 +32,6 @@ jobs:
 
       - name: Run GoReleaser via mise
         run: |
-          mise x goreleaser -- release --clean
+          mise x -- goreleaser release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
