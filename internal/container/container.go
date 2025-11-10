@@ -43,15 +43,24 @@ func locateLocalRegistry(cmd *cli.Command, logger *slog.Logger) fs.FS {
 	}
 
 	stat, err := os.Stat(s)
-	if err != nil || !stat.IsDir() {
+
+	switch {
+	case os.IsNotExist(err):
+		return nil
+	case err != nil:
 		logger.Warn(
-			"base dir not exist or is not a directory",
+			"base dir stat error",
 			slog.String("base-dir", s),
 			slog.Any("err", err),
 		)
-
 		return nil
+	case !stat.IsDir():
+		logger.Warn(
+			"base dir is not a directory",
+			slog.String("base-dir", s),
+		)
+		return nil
+	default:
+		return os.DirFS(s)
 	}
-
-	return os.DirFS(s)
 }

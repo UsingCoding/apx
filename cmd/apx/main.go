@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 	"time"
 
@@ -38,6 +39,11 @@ func runApp(ctx context.Context, args []string) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
+	userConfigDir, err := os.UserConfigDir()
+	if err != nil {
+		userConfigDir = ".apx"
+	}
+
 	c := &cli.Command{
 		Name:    appID,
 		Version: version,
@@ -58,6 +64,7 @@ func runApp(ctx context.Context, args []string) error {
 				Name:    "base-dir",
 				Aliases: []string{"b"},
 				Usage:   "Dir for config and local registry",
+				Value:   path.Join(userConfigDir, "apx"),
 			},
 		},
 	}
