@@ -10,9 +10,10 @@ import (
 
 func versionCMD() *cli.Command {
 	return &cli.Command{
-		Name:   "version",
-		Usage:  "Show apx version",
-		Action: executeVersion,
+		Name:    "version",
+		Usage:   "Show apx version",
+		Aliases: []string{"v"},
+		Action:  executeVersion,
 	}
 }
 
