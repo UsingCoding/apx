@@ -19,6 +19,10 @@ func (r Registry) Find(id string) (APXTOML, error) {
 	return APXTOML{}, errors.Errorf("app %q not found", id)
 }
 
+func (r Registry) All() []APXTOML {
+	return r.apps
+}
+
 func LoadRegistry(sources []fs.FS) (Registry, error) {
 	var apps []APXTOML
 	for i, src := range sources {

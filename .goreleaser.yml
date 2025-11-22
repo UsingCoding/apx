@@ -27,6 +27,10 @@ homebrew_casks:
   - name: apx
     description: "CLI wrapper for platform-specific sandboxes"
     homepage: "https://github.com/UsingCoding/apx"
+    caveats: |
+      To activate apx helpers execute:
+        - bash: echo 'eval "$(apx shellenv bash)"' >> ~/.bashrc
+        - zsh:  echo 'eval "$(apx shellenv zsh)"' >> ~/.zshrc
     repository:
       owner: UsingCoding
       name: homebrew-public
