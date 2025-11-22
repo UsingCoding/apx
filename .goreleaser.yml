@@ -28,9 +28,11 @@ homebrew_casks:
     description: "CLI wrapper for platform-specific sandboxes"
     homepage: "https://github.com/UsingCoding/apx"
     caveats: |
-      To activate apx helpers execute:
-        - bash: echo 'eval "$(apx shellenv bash)"' >> ~/.bashrc
-        - zsh:  echo 'eval "$(apx shellenv zsh)"' >> ~/.zshrc
+      <<~EOS
+        To activate apx helpers execute:
+          - bash: echo 'eval "$(apx shellenv bash)"' >> ~/.bashrc
+          - zsh:  echo 'eval "$(apx shellenv zsh)"' >> ~/.zshrc
+      EOS
     repository:
       owner: UsingCoding
       name: homebrew-public
