@@ -18,6 +18,10 @@ type Exec struct {
 }
 
 func (e Exec) Do(ctx context.Context) error {
+	if len(e.CMD) == 0 {
+		return errors.New("no command specified")
+	}
+
 	argv0 := e.CMD[0]
 
 	apxtoml, err := e.Reg.Find(argv0)
