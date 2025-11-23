@@ -31,25 +31,6 @@ func Decode() (p Project, err error) {
 	return p, nil
 }
 
-func HasProject() (bool, error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return false, err
-	}
-
-	stat, err := os.Stat(filepath.Join(cwd, defPath))
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return false, nil
-		}
-		return false, err
-	}
-	if stat.IsDir() {
-		return false, errors.Errorf("%s is a directory", filepath.Join(cwd, defPath))
-	}
-	return true, nil
-}
-
 func expandPaths(project Project) (Project, error) {
 	expand := func(p string) (string, error) {
 		p = os.ExpandEnv(p)

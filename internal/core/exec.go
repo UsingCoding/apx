@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"log/slog"
+	"os"
 
 	"github.com/pkg/errors"
 
@@ -38,18 +39,15 @@ func (e Exec) Do(ctx context.Context) error {
 		return errors.Errorf("sandbox %q for %q not found", s.Type, argv0)
 	}
 
-	has, err := projectapx.HasProject()
-	if err != nil {
-		return errors.Wrap(err, "couldn't check for project")
+	var p projectapx.Project
+	p, err = projectapx.Decode()
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		return errors.Wrap(err, "load project")
 	}
-	if has {
-		e.Logger.Debug("load project")
+	// project found
+	if !errors.Is(err, os.ErrNotExist) {
+		e.Logger.Debug("load project", slog.Any("project", p))
 
-		var p projectapx.Project
-		p, err = projectapx.Decode()
-		if err != nil {
-			return err
-		}
 		s.Policy, err = sandbox.MergePolicies(s.Policy, p.Policy)
 		if err != nil {
 			return err
