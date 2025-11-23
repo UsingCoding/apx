@@ -2,9 +2,11 @@ name = "codex"
 
 [[sandboxes]]
 type = "seatbelt"
-policy.fs.roPaths = [
-    "$HOME/.codex",
+
+[sandboxes.policy.fs]
+roPaths = [
+  "$HOME/.codex",
 ]
-policy.fs.rwPaths = [
-    "$HOME/.codex",
+rwPaths = [
+  "$HOME/.codex",
 ]

@@ -2,16 +2,17 @@ name = "opencode"
 
 [[sandboxes]]
 type = "seatbelt"
-policy.fs.roPaths = [
-  "$HOME/.local/share/opencode",
-  "$HOME/.config/opencode",
-  "$HOME/.local/state/opencode",
-  "$HOME/.cache/opencode",
-]
-policy.fs.rwPaths = [
-  "$HOME/.local/share/opencode",
-  "$HOME/.config/opencode",
-  "$HOME/.local/state/opencode",
-  "$HOME/.cache/opencode",
-]
 
+[sandboxes.policy.fs]
+roPaths = [
+  "$HOME/.local/share/opencode",
+  "$HOME/.config/opencode",
+  "$HOME/.local/state/opencode",
+  "$HOME/.cache/opencode",
+]
+rwPaths = [
+  "$HOME/.local/share/opencode",
+  "$HOME/.config/opencode",
+  "$HOME/.local/state/opencode",
+  "$HOME/.cache/opencode",
+]

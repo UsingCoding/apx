@@ -2,9 +2,11 @@ name = "bash"
 
 [[sandboxes]]
 type = "seatbelt"
-policy.fs.roPaths = [
-    "$HOME",
+
+[sandboxes.policy.fs]
+roPaths = [
+  "$HOME",
 ]
-policy.fs.rwPaths = [
-    "$HOME",
+rwPaths = [
+  "$HOME",
 ]

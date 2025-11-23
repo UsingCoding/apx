@@ -2,10 +2,11 @@ name = "zsh"
 
 [[sandboxes]]
 type = "seatbelt"
-policy.fs.roPaths = [
-    "$HOME",
-]
-policy.fs.rwPaths = [
-    "$HOME",
-]
 
+[sandboxes.policy.fs]
+roPaths = [
+  "$HOME",
+]
+rwPaths = [
+  "$HOME",
+]
