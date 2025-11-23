@@ -153,6 +153,6 @@
 
 ; Additional allow file-write's
 (allow file-write*
-(subpath (param "RW_ROOT_0"))
-(subpath (param "RW_ROOT_1"))
+	(subpath (param "RW_ROOT_0"))
+	(subpath (param "RW_ROOT_1"))
 )

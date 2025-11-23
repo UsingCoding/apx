@@ -1,6 +1,7 @@
 package seatbelt
 
 import (
+	_ "embed"
 	"fmt"
 	"os"
 	"path"
@@ -25,6 +26,13 @@ func (p params) flat() (res []string) {
 type param struct {
 	k, v string
 }
+
+var (
+	//go:embed seatbelt_base_policy.sbpl
+	seatbeltBasePolicy []byte
+	//go:embed seatbelt_network_policy.sbpl
+	seatbeltNetworkPolicy []byte
+)
 
 func makeProfile(p sandbox.Policy) (_ string, args params, err error) {
 	var policy strings.Builder
@@ -62,7 +70,7 @@ func makeProfile(p sandbox.Policy) (_ string, args params, err error) {
 		}
 
 		if len(p.Filesystem.ROPaths) != 0 {
-			paths := make([]string, 0, len(p.Filesystem.ROPaths))
+			policy.WriteString("; Additional allow file-read's\n(allow file-read*\n")
 
 			for i, roPath := range p.Filesystem.ROPaths {
 				abs, err2 := filepath.Abs(roPath)
@@ -71,19 +79,15 @@ func makeProfile(p sandbox.Policy) (_ string, args params, err error) {
 				}
 				pName := fmt.Sprintf("RO_ROOT_%d", i)
 
-				paths = append(paths, fmt.Sprintf(`(subpath (param %q))`, pName))
+				policy.WriteString(fmt.Sprintf("	(subpath (param %q))\n", pName))
 				args = append(args, param{k: pName, v: abs})
 			}
 
-			fileReads := fmt.Sprintf(
-				"; Additional allow file-read's\n(allow file-read*\n%s\n)\n",
-				strings.Join(paths, "\n"),
-			)
-			_, _ = policy.WriteString(fileReads)
+			policy.WriteString(")\n")
 		}
 
 		if len(p.Filesystem.RWPaths) != 0 {
-			paths := make([]string, 0, len(p.Filesystem.RWPaths))
+			policy.WriteString("; Additional allow file-write's\n(allow file-write*\n")
 
 			for i, rwPath := range p.Filesystem.RWPaths {
 				abs, err2 := filepath.Abs(rwPath)
@@ -92,15 +96,28 @@ func makeProfile(p sandbox.Policy) (_ string, args params, err error) {
 				}
 				pName := fmt.Sprintf("RW_ROOT_%d", i)
 
-				paths = append(paths, fmt.Sprintf(`(subpath (param %q))`, pName))
+				policy.WriteString(fmt.Sprintf("	(subpath (param %q))\n", pName))
 				args = append(args, param{k: pName, v: abs})
 			}
 
-			fileWrites := fmt.Sprintf(
-				"; Additional allow file-write's\n(allow file-write*\n%s\n)\n",
-				strings.Join(paths, "\n"),
-			)
-			_, _ = policy.WriteString(fileWrites)
+			policy.WriteString(")\n")
+		}
+
+		if len(p.Filesystem.DenyPaths) != 0 {
+			_, _ = policy.WriteString("(deny file-read* file-read-metadata\n")
+
+			for i, denyPath := range p.Filesystem.DenyPaths {
+				abs, err2 := filepath.Abs(denyPath)
+				if err2 != nil {
+					return "", nil, errors.Wrapf(err2, "absolute path for DenyPath %s", denyPath)
+				}
+				pName := fmt.Sprintf("DENY_PATH_%d", i)
+
+				_, _ = policy.WriteString(fmt.Sprintf("	(subpath (param %q))\n", pName))
+				args = append(args, param{k: pName, v: abs})
+			}
+
+			_, _ = policy.WriteString(")\n")
 		}
 
 		if p.Filesystem.NoCache {

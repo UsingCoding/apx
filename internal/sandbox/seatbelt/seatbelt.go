@@ -2,7 +2,6 @@ package seatbelt
 
 import (
 	"context"
-	_ "embed"
 	"fmt"
 	"log/slog"
 	"os"
@@ -11,13 +10,6 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/UsingCoding/apx/internal/sandbox"
-)
-
-var (
-	//go:embed seatbelt_base_policy.sbpl
-	seatbeltBasePolicy []byte
-	//go:embed seatbelt_network_policy.sbpl
-	seatbeltNetworkPolicy []byte
 )
 
 type Seatbelt struct{}

@@ -151,8 +151,7 @@
   (subpath (param "WRITABLE_ROOT_4"))
 )
 
-; Additional allow file-read's
-(allow file-read*
-	(subpath (param "RO_ROOT_0"))
-	(subpath (param "RO_ROOT_1"))
+(deny file-read* file-read-metadata
+	(subpath (param "DENY_PATH_0"))
+	(subpath (param "DENY_PATH_1"))
 )

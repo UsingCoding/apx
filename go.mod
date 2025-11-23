@@ -3,6 +3,7 @@ module github.com/UsingCoding/apx
 go 1.25
 
 require (
+	dario.cat/mergo v1.0.2
 	github.com/BurntSushi/toml v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.34.0

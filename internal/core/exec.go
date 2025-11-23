@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/UsingCoding/apx/internal/app"
+	"github.com/UsingCoding/apx/internal/projectapx"
 	"github.com/UsingCoding/apx/internal/sandbox"
 )
 
@@ -35,6 +36,24 @@ func (e Exec) Do(ctx context.Context) error {
 	sndbox, ok := sandbox.R.Lookup(s.Type)
 	if !ok {
 		return errors.Errorf("sandbox %q for %q not found", s.Type, argv0)
+	}
+
+	has, err := projectapx.HasProject()
+	if err != nil {
+		return errors.Wrap(err, "couldn't check for project")
+	}
+	if has {
+		e.Logger.Debug("load project")
+
+		var p projectapx.Project
+		p, err = projectapx.Decode()
+		if err != nil {
+			return err
+		}
+		s.Policy, err = sandbox.MergePolicies(s.Policy, p.Policy)
+		if err != nil {
+			return err
+		}
 	}
 
 	return sndbox.Exec(ctx, e.CMD, s.Policy, e.Logger)

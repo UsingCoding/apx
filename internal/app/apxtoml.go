@@ -44,6 +44,9 @@ func expandPaths(apx APXTOML) APXTOML {
 		for i, p := range s.Policy.Filesystem.RWPaths {
 			s.Policy.Filesystem.RWPaths[i] = os.ExpandEnv(p)
 		}
+		for i, p := range s.Policy.Filesystem.DenyPaths {
+			s.Policy.Filesystem.DenyPaths[i] = os.ExpandEnv(p)
+		}
 	}
 
 	return apx
