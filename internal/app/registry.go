@@ -2,6 +2,7 @@ package app
 
 import (
 	"io/fs"
+	"slices"
 
 	"github.com/pkg/errors"
 )
@@ -30,7 +31,7 @@ func LoadRegistry(sources []fs.FS) (Registry, error) {
 		if err != nil {
 			return Registry{}, errors.Wrapf(err, "load apps from %d source", i)
 		}
-		apps = append(apps, a...)
+		apps = mergeApps(apps, a)
 	}
 	return Registry{apps: apps}, nil
 }
@@ -63,4 +64,19 @@ func loadApps(src fs.FS) (res []APXTOML, err error) {
 	}
 
 	return res, nil
+}
+
+func mergeApps(apps, newApps []APXTOML) []APXTOML {
+	for _, apxtoml := range newApps {
+		i := slices.IndexFunc(apps, func(s APXTOML) bool {
+			return s.Name == apxtoml.Name
+		})
+		if i == -1 {
+			apps = append(apps, apxtoml)
+			continue
+		}
+
+		apps[i] = apxtoml
+	}
+	return apps
 }

@@ -1,0 +1,10 @@
+name = "bash"
+
+[[sandboxes]]
+type = "seatbelt"
+policy.fs.roPaths = [
+    "$HOME",
+]
+policy.fs.rwPaths = [
+    "$HOME",
+]
