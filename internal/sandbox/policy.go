@@ -6,13 +6,12 @@ import (
 )
 
 type Policy struct {
+	Env        Env        `toml:"env"`
 	Filesystem Filesystem `toml:"fs"`
 	Network    Network    `toml:"net"`
 }
 
-type Network struct {
-	Deny bool `toml:"deny"`
-}
+type Env map[string]string
 
 type Filesystem struct {
 	FullDiskReadAccess bool `toml:"fullDiskReadAccess"`
@@ -21,6 +20,10 @@ type Filesystem struct {
 	ROPaths   []string `toml:"roPaths"`
 	RWPaths   []string `toml:"rwPaths"`
 	DenyPaths []string `toml:"denyPaths"`
+}
+
+type Network struct {
+	Deny bool `toml:"deny"`
 }
 
 func MergePolicies(p1, p2 Policy) (Policy, error) {

@@ -34,7 +34,16 @@ func (s Seatbelt) Exec(ctx context.Context, cmd []string, p sandbox.Policy, logg
 	args = append(args, "--")
 	args = append(args, cmd...)
 
-	logger.DebugContext(ctx, "", slog.Any("args", args))
+	logger.DebugContext(
+		ctx,
+		"",
+		slog.Any("args", args),
+		slog.Any("env", p.Env),
+	)
+
+	for k, v := range p.Env {
+		_ = os.Setenv(k, v)
+	}
 
 	err = syscall.Exec(sb, args, os.Environ())
 	return errors.Wrap(err, "exec seatbelt")

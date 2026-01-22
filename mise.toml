@@ -5,6 +5,7 @@ goreleaser = "2.12.5"
 
 [tasks.default]
 run = [
+    { task = "modules" },
     { task = "build" },
     { task = "test" },
 ]
