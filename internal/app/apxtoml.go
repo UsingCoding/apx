@@ -2,7 +2,6 @@ package app
 
 import (
 	"io/fs"
-	"os"
 	"path/filepath"
 
 	"github.com/BurntSushi/toml"
@@ -15,39 +14,25 @@ import (
 type APXTOML struct {
 	Name string `toml:"name"`
 	// Multiple sandboxes allowed for app
-	Sandboxes []Sandbox `toml:"sandboxes"`
+	Sandboxes []sandbox.Sandbox `toml:"sandboxes"`
+
+	AdditionalProperties toml.MetaData `toml:"-"`
 }
 
 type Sandbox struct {
-	Type   string         `toml:"type"`
-	Policy sandbox.Policy `toml:"policy"`
+	ID   string `toml:"id"`
+	Spec any    `toml:"spec"`
 }
 
 func decode(src fs.FS, p string) (apx APXTOML, err error) {
-	_, err = toml.DecodeFS(src, p, &apx)
+	md, err := toml.DecodeFS(src, p, &apx)
 	if err != nil {
 		return APXTOML{}, errors.Wrap(err, "error decoding APXTOML")
 	}
-	apx = expandPaths(apx)
+	apx.AdditionalProperties = md
 	return apx, err
 }
 
 func matcher(p string) (matched bool, err error) {
 	return filepath.Match("*.apx.toml", p)
-}
-
-func expandPaths(apx APXTOML) APXTOML {
-	for _, s := range apx.Sandboxes {
-		for i, p := range s.Policy.Filesystem.ROPaths {
-			s.Policy.Filesystem.ROPaths[i] = os.ExpandEnv(p)
-		}
-		for i, p := range s.Policy.Filesystem.RWPaths {
-			s.Policy.Filesystem.RWPaths[i] = os.ExpandEnv(p)
-		}
-		for i, p := range s.Policy.Filesystem.DenyPaths {
-			s.Policy.Filesystem.DenyPaths[i] = os.ExpandEnv(p)
-		}
-	}
-
-	return apx
 }

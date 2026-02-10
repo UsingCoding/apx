@@ -1,9 +1,6 @@
-package sandbox
+package seatbelt
 
-import (
-	"dario.cat/mergo"
-	"github.com/pkg/errors"
-)
+import "os"
 
 type Policy struct {
 	Env        Env        `toml:"env"`
@@ -26,10 +23,16 @@ type Network struct {
 	Deny bool `toml:"deny"`
 }
 
-func MergePolicies(p1, p2 Policy) (Policy, error) {
-	err := mergo.Merge(&p1, p2, mergo.WithOverride)
-	if err != nil {
-		return Policy{}, errors.Wrap(err, "merge policies")
+func expandPaths(pol Policy) Policy {
+	for i, p := range pol.Filesystem.ROPaths {
+		pol.Filesystem.ROPaths[i] = os.ExpandEnv(p)
 	}
-	return p1, nil
+	for i, p := range pol.Filesystem.RWPaths {
+		pol.Filesystem.RWPaths[i] = os.ExpandEnv(p)
+	}
+	for i, p := range pol.Filesystem.DenyPaths {
+		pol.Filesystem.DenyPaths[i] = os.ExpandEnv(p)
+	}
+
+	return pol
 }

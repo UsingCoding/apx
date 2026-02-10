@@ -6,5 +6,9 @@ import (
 
 //nolint:gochecknoinits
 func init() {
-	sandbox.R.Register("seatbelt", Seatbelt{})
+	sandbox.R.Register(sandbox.Sandbox{
+		ID:      "seatbelt",
+		Spec:    Policy{},
+		Runtime: Seatbelt{},
+	})
 }

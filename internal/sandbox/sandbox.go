@@ -5,6 +5,13 @@ import (
 	"log/slog"
 )
 
-type Sandbox interface {
-	Exec(ctx context.Context, cmd []string, policy Policy, logger *slog.Logger) error
+type Sandbox struct {
+	ID   string
+	Spec any
+
+	Runtime Runtime
+}
+
+type Runtime interface {
+	Exec(ctx context.Context, cmd []string, specs []any, logger *slog.Logger) error
 }

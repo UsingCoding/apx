@@ -14,7 +14,19 @@ import (
 
 type Seatbelt struct{}
 
-func (s Seatbelt) Exec(ctx context.Context, cmd []string, p sandbox.Policy, logger *slog.Logger) error {
+func (s Seatbelt) Exec(ctx context.Context, cmd []string, specs []any, logger *slog.Logger) error {
+	policies, err := sandbox.AssertSpecs[Policy](specs)
+	if err != nil {
+		return err
+	}
+
+	p, err := sandbox.MergeSpec(policies)
+	if err != nil {
+		return err
+	}
+
+	p = expandPaths(p)
+
 	// use absolute path to sandbox-exec to avoid path substitution attack
 	const sb = "/usr/bin/sandbox-exec"
 

@@ -34,9 +34,9 @@ func (e Exec) Do(ctx context.Context) error {
 	// for now, just take first sandbox
 	s := apxtoml.Sandboxes[0]
 
-	sndbox, ok := sandbox.R.Lookup(s.Type)
+	sndbox, ok := sandbox.R.Lookup(s.ID)
 	if !ok {
-		return errors.Errorf("sandbox %q for %q not found", s.Type, argv0)
+		return errors.Errorf("sandbox %q for %q not found", s.ID, argv0)
 	}
 
 	var p projectapx.Project
@@ -44,15 +44,15 @@ func (e Exec) Do(ctx context.Context) error {
 	if err != nil && !errors.Is(err, os.ErrNotExist) {
 		return errors.Wrap(err, "load project")
 	}
+
+	specs := []any{}
+
 	// project found
 	if !errors.Is(err, os.ErrNotExist) {
 		e.Logger.Debug("load project", slog.Any("project", p))
 
-		s.Policy, err = sandbox.MergePolicies(s.Policy, p.Policy)
-		if err != nil {
-			return err
-		}
 	}
 
+	sndbox.Runtime.Exec(ctx, e.CMD)
 	return sndbox.Exec(ctx, e.CMD, s.Policy, e.Logger)
 }

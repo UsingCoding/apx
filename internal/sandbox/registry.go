@@ -10,13 +10,13 @@ type Registry struct {
 	sandboxes map[string]Sandbox
 }
 
-func (r Registry) Register(id string, s Sandbox) {
-	_, ok := r.sandboxes[id]
+func (r Registry) Register(s Sandbox) {
+	_, ok := r.sandboxes[s.ID]
 	if ok {
-		panic("sandbox already registered: " + id)
+		panic("sandbox already registered: " + s.ID)
 	}
 
-	r.sandboxes[id] = s
+	r.sandboxes[s.ID] = s
 }
 
 func (r Registry) Lookup(id string) (Sandbox, bool) {
