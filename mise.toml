@@ -19,6 +19,14 @@ goreleaser build \
   --single-target -o ./dist/apx
 """
 
+[tasks.build-all]
+run = """
+#!/usr/bin/env bash
+
+goreleaser build \
+  --snapshot --skip=before --clean
+"""
+
 [tasks.modules]
 run = "go mod tidy"
 
