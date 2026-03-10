@@ -4,9 +4,4 @@ name = "zsh"
 type = "seatbelt"
 
 [sandboxes.policy.fs]
-roPaths = [
-  "$HOME",
-]
-rwPaths = [
-  "$HOME",
-]
+home = { rw = true }

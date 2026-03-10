@@ -4,9 +4,4 @@ name = "codex"
 type = "seatbelt"
 
 [sandboxes.policy.fs]
-roPaths = [
-  "$HOME/.codex",
-]
-rwPaths = [
-  "$HOME/.codex",
-]
+home = { rw = true }

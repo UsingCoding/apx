@@ -54,5 +54,6 @@ func (e Exec) Do(ctx context.Context) error {
 		}
 	}
 
+	e.Logger.Debug("policy", slog.Any("policy", s.Policy))
 	return sndbox.Exec(ctx, e.CMD, s.Policy, e.Logger)
 }

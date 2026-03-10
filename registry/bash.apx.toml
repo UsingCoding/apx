@@ -4,9 +4,5 @@ name = "bash"
 type = "seatbelt"
 
 [sandboxes.policy.fs]
-roPaths = [
-  "$HOME",
-]
-rwPaths = [
-  "$HOME",
-]
+# Allow home access
+home = { rw = true }
