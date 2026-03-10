@@ -11,6 +11,14 @@ apx codex
 apx -- codex -m "gpt-5"
 ```
 
+## Install
+
+Via homebrew on Linux/MacOS
+
+```shell
+brew install usingcoding/public/apx
+```
+
 ## Supported sandboxes
 
 ✅ - Support implemented
