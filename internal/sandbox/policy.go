@@ -155,7 +155,11 @@ func homeDirPolicy(p Policy, h Home) (Policy, error) {
 		denyList = append(denyList, def...)
 	}
 	if h.DenyList != nil {
-		denyList = append(denyList, h.DenyList...)
+		denyPaths, err3 := expandPaths(h.DenyList)
+		if err3 != nil {
+			return Policy{}, errors.Wrap(err3, "deny list")
+		}
+		denyList = append(denyList, denyPaths...)
 	}
 
 	for _, e := range entries {

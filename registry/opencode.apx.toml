@@ -5,3 +5,10 @@ type = "seatbelt"
 
 [sandboxes.policy.fs]
 home = { rw = true }
+
+
+[[sandboxes]]
+type = "landlock"
+
+[sandboxes.policy.fs]
+home = { rw = true }

@@ -31,12 +31,9 @@ func (e Exec) Do(ctx context.Context) error {
 		return err
 	}
 
-	// for now, just take first sandbox
-	s := apxtoml.Sandboxes[0]
-
-	sndbox, ok := sandbox.R.Lookup(s.Type)
-	if !ok {
-		return errors.Errorf("sandbox %q for %q not found", s.Type, argv0)
+	s, sndbox, err := e.findSandbox(apxtoml.Sandboxes)
+	if err != nil {
+		return errors.Wrapf(err, "for %q", argv0)
 	}
 
 	var p projectapx.Project
@@ -56,4 +53,15 @@ func (e Exec) Do(ctx context.Context) error {
 
 	e.Logger.Debug("policy", slog.Any("policy", s.Policy))
 	return sndbox.Exec(ctx, e.CMD, s.Policy, e.Logger)
+}
+
+func (e Exec) findSandbox(sandboxes []app.Sandbox) (s app.Sandbox, b sandbox.Sandbox, err error) {
+	for _, s := range sandboxes {
+		// for now, just take first supported sandbox
+		if b, ok := sandbox.R.Lookup(s.Type); ok {
+			return s, b, nil
+		}
+	}
+
+	return app.Sandbox{}, nil, errors.New("supported sandboxes not found")
 }

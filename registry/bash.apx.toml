@@ -4,5 +4,11 @@ name = "bash"
 type = "seatbelt"
 
 [sandboxes.policy.fs]
-# Allow home access
+home = { rw = true }
+
+
+[[sandboxes]]
+type = "landlock"
+
+[sandboxes.policy.fs]
 home = { rw = true }
