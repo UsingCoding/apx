@@ -55,7 +55,7 @@ func (e Exec) Do(ctx context.Context) error {
 	return sndbox.Exec(ctx, e.CMD, s.Policy, e.Logger)
 }
 
-func (e Exec) findSandbox(sandboxes []app.Sandbox) (app.Sandbox, sandbox.Sandbox, error) {
+func (e Exec) findSandbox(sandboxes []app.Sandbox) (s app.Sandbox, b sandbox.Sandbox, err error) {
 	for _, s := range sandboxes {
 		// for now, just take first supported sandbox
 		if b, ok := sandbox.R.Lookup(s.Type); ok {

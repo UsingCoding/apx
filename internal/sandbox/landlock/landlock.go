@@ -7,8 +7,9 @@ import (
 	"os/exec"
 	"syscall"
 
-	"github.com/UsingCoding/apx/internal/sandbox"
 	"github.com/pkg/errors"
+
+	"github.com/UsingCoding/apx/internal/sandbox"
 )
 
 type Landlock struct{}

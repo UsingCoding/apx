@@ -15,29 +15,20 @@ Sandbox backends self-register via `init()` side-effect imports, keeping core lo
 
 The project uses [mise](https://mise.jdx.dev/) as the task runner. Tool versions are pinned in `mise.toml`.
 
-| Task | Command | Description |
-|---|---|---|
-| Default (all) | `mise run` | Runs `modules` → `build` → `test` |
-| Build | `mise run build` | Builds binary via goreleaser (snapshot, single target) |
-| Tidy modules | `mise run modules` | `go mod tidy` |
-| All tests | `mise run test` | Runs `test:go-test` and `test:lint` in parallel |
-| Go tests | `mise run test:go-test` | `go test ./...` |
-| Lint | `mise run test:lint` | `golangci-lint run` |
+| Task          | Command                 | Description                                            |
+|---------------|-------------------------|--------------------------------------------------------|
+| Default (all) | `mise run`              | Runs `modules` → `build` → `test`                      |
+| Build         | `mise run build`        | Builds binary via goreleaser (snapshot, single target) |
+| Tidy modules  | `mise run modules`      | `go mod tidy`                                          |
+| All tests     | `mise run test`         | Runs `test:go-test` and `test:lint` in parallel        |
+| Go tests      | `mise run test:go-test` | `go test ./...`                                        |
+| Lint          | `mise run test:lint`    | `golangci-lint run`                                    |
 
-### Running a Single Test
+### Updating tests
 
 ```bash
-# Run one test function by name
-go test ./internal/sandbox/seatbelt -run TestSnapshot_Default -v
-
-# Run all snapshot tests
-go test ./internal/sandbox/seatbelt -run Snapshot -v
-
 # Update golden snapshot files
 UPDATE_SNAPSHOTS=1 go test ./internal/sandbox/seatbelt -run Snapshot -v
-
-# Run all tests with verbose output
-go test ./... -v
 ```
 
 Test naming convention: `Test<Subject>_<Scenario>` (e.g., `TestSnapshot_NetworkAllowed`).
@@ -131,6 +122,14 @@ if err != nil && !errors.Is(err, os.ErrNotExist) { ... }
 - Always return a **zero value** of the return type alongside an error — `return Policy{}, errors.Wrap(...)`.
 - Use `panic` **only for programmer errors** (invariant violations), not for recoverable runtime errors.
 - Suppress linter warnings sparingly with `//nolint:<linter>` and only with justification.
+
+### Function Ordering
+
+Within any Go file, functions are ordered:
+1. **Exported** (`PascalCase`) functions first.
+2. **Unexported** (`camelCase`) functions after.
+
+This applies to both production and test files — `Test*` functions appear before any private helper functions.
 
 ### Testing
 

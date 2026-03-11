@@ -5,10 +5,11 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/UsingCoding/apx/internal/sandbox"
 	ll "github.com/landlock-lsm/go-landlock/landlock"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
+
+	"github.com/UsingCoding/apx/internal/sandbox"
 )
 
 var (
