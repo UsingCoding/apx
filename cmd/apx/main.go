@@ -55,6 +55,7 @@ func runApp(ctx context.Context, args []string) error {
 		EnableShellCompletion: true,
 		Action:                exec,
 		Commands: []*cli.Command{
+			reg(),
 			shellenv(),
 			versionCMD(),
 		},

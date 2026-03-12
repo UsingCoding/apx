@@ -1,0 +1,74 @@
+package app
+
+import (
+	"io/fs"
+	"path/filepath"
+	"slices"
+
+	"github.com/pkg/errors"
+)
+
+type RegFS struct {
+	fs.FS
+	Path string
+}
+
+func LoadRegistry(sources []RegFS) (Registry, error) {
+	var apps []RegWrapper
+	for i, src := range sources {
+		a, err := loadApps(src)
+		if err != nil {
+			return Registry{}, errors.Wrapf(err, "load apps from %d source", i)
+		}
+		apps = mergeApps(apps, a)
+	}
+	return Registry{apps: apps}, nil
+}
+
+func loadApps(src RegFS) (res []RegWrapper, err error) {
+	err = fs.WalkDir(src, ".", func(p string, _ fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		matched, err := matcher(p)
+		if err != nil {
+			return errors.Wrapf(err, "match %s", p)
+		}
+		if !matched {
+			return nil
+		}
+
+		apx, err := decode(src, p)
+		if err != nil {
+			return errors.Wrapf(err, "decode %s", p)
+		}
+
+		res = append(res, RegWrapper{
+			APXTOML: apx,
+			Source:  filepath.Join(src.Path, p),
+		})
+
+		return nil
+	})
+	if err != nil {
+		return nil, errors.Wrap(err, "search for apx.toml files")
+	}
+
+	return res, nil
+}
+
+func mergeApps(apps, newApps []RegWrapper) []RegWrapper {
+	for _, apxtoml := range newApps {
+		i := slices.IndexFunc(apps, func(s RegWrapper) bool {
+			return s.APXTOML.Name == apxtoml.APXTOML.Name
+		})
+		if i == -1 {
+			apps = append(apps, apxtoml)
+			continue
+		}
+
+		apps[i] = apxtoml
+	}
+	return apps
+}

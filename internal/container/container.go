@@ -3,7 +3,6 @@ package container
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -21,14 +20,17 @@ type Container struct {
 }
 
 func Make(ctx context.Context, cmd *cli.Command, logger *slog.Logger) (Container, error) {
-	regLocations := []fs.FS{
-		registry.RegFS,
+	regLocations := []app.RegFS{
+		{
+			FS:   registry.RegFS,
+			Path: "builtin",
+		},
 	}
 	if f := locateLocalRegistry(ctx, cmd, logger); f != nil {
-		regLocations = append(regLocations, f)
+		regLocations = append(regLocations, *f)
 	}
 	if f := locateLegacyLocalRegistry(ctx, logger); f != nil {
-		regLocations = append(regLocations, f)
+		regLocations = append(regLocations, *f)
 	}
 	reg, err := app.LoadRegistry(regLocations)
 	if err != nil {
@@ -41,7 +43,7 @@ func Make(ctx context.Context, cmd *cli.Command, logger *slog.Logger) (Container
 	}, nil
 }
 
-func locateLocalRegistry(ctx context.Context, cmd *cli.Command, logger *slog.Logger) fs.FS {
+func locateLocalRegistry(ctx context.Context, cmd *cli.Command, logger *slog.Logger) *app.RegFS {
 	s := cmd.String("base-dir")
 	if s == "" {
 		return nil
@@ -68,11 +70,14 @@ func locateLocalRegistry(ctx context.Context, cmd *cli.Command, logger *slog.Log
 		)
 		return nil
 	default:
-		return os.DirFS(s)
+		return &app.RegFS{
+			FS:   os.DirFS(s),
+			Path: s,
+		}
 	}
 }
 
-func locateLegacyLocalRegistry(ctx context.Context, logger *slog.Logger) fs.FS {
+func locateLegacyLocalRegistry(ctx context.Context, logger *slog.Logger) *app.RegFS {
 	dir, err := os.UserConfigDir()
 	if err != nil {
 		return nil
@@ -89,5 +94,8 @@ func locateLegacyLocalRegistry(ctx context.Context, logger *slog.Logger) fs.FS {
 	msg := fmt.Sprintf("use legacy local registry at %s; please use new one", dir)
 	logger.DebugContext(ctx, msg)
 
-	return os.DirFS(dir)
+	return &app.RegFS{
+		FS:   os.DirFS(dir),
+		Path: dir,
+	}
 }

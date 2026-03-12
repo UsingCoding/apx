@@ -22,6 +22,11 @@ type Sandbox struct {
 	Policy sandbox.Policy `toml:"policy"`
 }
 
+func Encode(apx APXTOML) ([]byte, error) {
+	data, err := toml.Marshal(apx)
+	return data, errors.Wrapf(err, "apxtoml marshal for %s", apx.Name)
+}
+
 func decode(src fs.FS, p string) (apx APXTOML, err error) {
 	_, err = toml.DecodeFS(src, p, &apx)
 	if err != nil {
