@@ -108,6 +108,10 @@ You can define own collection of `<app>.apx.toml`
 * Create `<app>.apx.toml` in format shown above. For example `git.apx.toml` (sandbox for git ¯\_(ツ)_/¯)
 * Run `apx -- git`
 
+**Important**
+
+When you have local and built-in `apx.toml` for same app - local **replaces** built-in, **no merge**
+
 ## Debugging
 
 When some app or cli fails with permission denied without specific details, os-specific tools can help with debug.
