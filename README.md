@@ -98,6 +98,10 @@ deny = true
 
 ## Configuration
 
+### Registry
+
+You can view registry elements with `apx reg ls`
+
 ### Local Registry and sandboxes
 
 APX has built-in apps in registry defined at [registry](registry)
