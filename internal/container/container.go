@@ -2,6 +2,7 @@ package container
 
 import (
 	"context"
+	"fmt"
 	"io/fs"
 	"log/slog"
 	"os"
@@ -18,11 +19,14 @@ type Container struct {
 	ApxRegistry app.Registry
 }
 
-func Make(_ context.Context, cmd *cli.Command, logger *slog.Logger) (Container, error) {
+func Make(ctx context.Context, cmd *cli.Command, logger *slog.Logger) (Container, error) {
 	regLocations := []fs.FS{
 		registry.RegFS,
 	}
-	if f := locateLocalRegistry(cmd, logger); f != nil {
+	if f := locateLocalRegistry(ctx, cmd, logger); f != nil {
+		regLocations = append(regLocations, f)
+	}
+	if f := locateLegacyLocalRegistry(ctx, logger); f != nil {
 		regLocations = append(regLocations, f)
 	}
 	reg, err := app.LoadRegistry(regLocations)
@@ -36,7 +40,7 @@ func Make(_ context.Context, cmd *cli.Command, logger *slog.Logger) (Container, 
 	}, nil
 }
 
-func locateLocalRegistry(cmd *cli.Command, logger *slog.Logger) fs.FS {
+func locateLocalRegistry(ctx context.Context, cmd *cli.Command, logger *slog.Logger) fs.FS {
 	s := cmd.String("base-dir")
 	if s == "" {
 		return nil
@@ -48,14 +52,16 @@ func locateLocalRegistry(cmd *cli.Command, logger *slog.Logger) fs.FS {
 	case os.IsNotExist(err):
 		return nil
 	case err != nil:
-		logger.Warn(
+		logger.WarnContext(
+			ctx,
 			"base dir stat error",
 			slog.String("base-dir", s),
 			slog.Any("err", err),
 		)
 		return nil
 	case !stat.IsDir():
-		logger.Warn(
+		logger.WarnContext(
+			ctx,
 			"base dir is not a directory",
 			slog.String("base-dir", s),
 		)
@@ -63,4 +69,22 @@ func locateLocalRegistry(cmd *cli.Command, logger *slog.Logger) fs.FS {
 	default:
 		return os.DirFS(s)
 	}
+}
+
+func locateLegacyLocalRegistry(ctx context.Context, logger *slog.Logger) fs.FS {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		return nil
+	}
+
+	_, err = os.Stat(dir)
+	if err != nil {
+		// ignore any error
+		return nil
+	}
+
+	msg := fmt.Sprintf("use legacy local registry at %s; please use new one", dir)
+	logger.DebugContext(ctx, msg)
+
+	return os.DirFS(dir)
 }

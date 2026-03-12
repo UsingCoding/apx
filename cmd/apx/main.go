@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/UsingCoding/apx/internal/osconfig"
+
 	"github.com/rs/zerolog"
 	zeroslog "github.com/samber/slog-zerolog"
 	"github.com/urfave/cli/v3"
@@ -39,7 +41,7 @@ func runApp(ctx context.Context, args []string) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	userConfigDir, err := os.UserConfigDir()
+	userConfigDir, err := osconfig.UserConfigDir()
 	if err != nil {
 		userConfigDir = ".apx"
 	}

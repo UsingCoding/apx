@@ -96,6 +96,18 @@ deny = true
 | Landlock+seccomp | Linux       | ✅      | Supported by kernel (5.13+) restrictions for process over files access (via Landlock) and network (via seccomp) |
 | Docker           | Linux+MacOS | ❌      | Isolation via docker containers                                                                                 |
 
+## Configuration
+
+### Local Registry and sandboxes
+
+APX has built-in apps in registry defined at [registry](registry)
+
+You can define own collection of `<app>.apx.toml`
+
+* At `$HOME/.config/apx`
+* Create `<app>.apx.toml` in format shown above. For example `git.apx.toml` (sandbox for git ¯\_(ツ)_/¯)
+* Run `apx -- git`
+
 ## Debugging
 
 When some app or cli fails with permission denied without specific details, os-specific tools can help with debug.
