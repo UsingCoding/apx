@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log/slog"
 	"os"
+	"path/filepath"
 
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v3"
@@ -76,6 +77,8 @@ func locateLegacyLocalRegistry(ctx context.Context, logger *slog.Logger) fs.FS {
 	if err != nil {
 		return nil
 	}
+
+	dir = filepath.Join(dir, "apx")
 
 	_, err = os.Stat(dir)
 	if err != nil {
