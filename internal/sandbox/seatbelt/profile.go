@@ -63,6 +63,15 @@ func makeProfile(p sandbox.Policy) (_ string, args params, err error) {
 
 	//nolint:gocritic
 	{
+		// add permissions to List HOME dir by default
+		if p.Filesystem.Home != nil && !p.Filesystem.Home.DisallowList {
+			policy.WriteString("; allow list home dir\n")
+			// Used `path` directive to match only HOME dir itself
+			policy.WriteString(fmt.Sprintf("(allow file-read* (path (param %q)))\n", "USER_HOME_DIR"))
+		}
+	}
+	//nolint:gocritic
+	{
 		if p.Filesystem.FullDiskReadAccess {
 			const diskReadAccess = "; allow read-only file operations\n(allow file-read*)"
 

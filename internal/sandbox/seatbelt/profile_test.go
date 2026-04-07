@@ -48,6 +48,13 @@ func TestSnapshot_DenyPaths(t *testing.T) {
 	writeOrCompareSnapshot(t, "fs_deny_paths", prof)
 }
 
+func TestSnapshot_HomeDir(t *testing.T) {
+	t.Setenv("HOME", filepath.Join(t.TempDir(), "home"))
+	prof, _, err := makeProfile(sandbox.Policy{Filesystem: sandbox.Filesystem{Home: &sandbox.Home{}}, Network: sandbox.Network{Deny: true}})
+	assert.NoError(t, err)
+	writeOrCompareSnapshot(t, "fs_home_dir", prof)
+}
+
 func TestSnapshot_NetworkAllowed(t *testing.T) {
 	prof, _, err := makeProfile(sandbox.Policy{Network: sandbox.Network{Deny: false}})
 	assert.NoError(t, err)
