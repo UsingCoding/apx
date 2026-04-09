@@ -57,6 +57,8 @@ type Filesystem struct {
 type Home struct {
 	// AllPaths allows access to any subpath under Home dir
 	AllPaths bool `toml:"allPaths"`
+	// DisallowList blocks listing of $HOME
+	DisallowList bool `toml:"disallowList"`
 	// SkipDefaultDenyList do not use default deny list
 	SkipDefaultDenyList bool `toml:"skipDefaultDenyList"`
 	// DenyList under home dir where access is forbidden

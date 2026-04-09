@@ -6,6 +6,7 @@ import (
 	"os"
 
 	ll "github.com/landlock-lsm/go-landlock/landlock"
+	llsyscall "github.com/landlock-lsm/go-landlock/landlock/syscall"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 
@@ -80,6 +81,14 @@ func fsRules(ctx context.Context, p sandbox.Policy, logger *slog.Logger) ([]ll.F
 	p.Filesystem.RWPaths = append(p.Filesystem.RWPaths, wd)
 
 	var rules []ll.FSRule
+
+	if p.Filesystem.Home != nil && !p.Filesystem.Home.DisallowList {
+		homeDir, err2 := os.UserHomeDir()
+		if err2 != nil {
+			return nil, errors.Wrap(err2, "user home directory")
+		}
+		rules = append(rules, ll.PathAccess(ll.AccessFSSet(llsyscall.AccessFSReadDir), homeDir))
+	}
 
 	lo.ForEach(p.Filesystem.ROPaths, func(p string, _ int) {
 		// ignore err, if path not exists or incorrect - skip it

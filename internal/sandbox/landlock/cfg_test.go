@@ -87,6 +87,29 @@ func TestFsRules_PolicyRWPathsIncluded(t *testing.T) {
 	assert.True(t, containsPath(strs, "/tmp"), "expected rule for policy RW path /tmp")
 }
 
+func TestFsRules_HomeDirReadDir(t *testing.T) {
+	t.Setenv("HOME", t.TempDir())
+
+	homeDir, err := os.UserHomeDir()
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+
+	rules, err := fsRules(context.Background(), sandbox.Policy{
+		Filesystem: sandbox.Filesystem{
+			Home: &sandbox.Home{},
+		},
+	}, discardLogger())
+	assert.NoError(t, err)
+	if err != nil {
+		return
+	}
+
+	strs := rulesStr(rules)
+	assert.True(t, containsPath(strs, homeDir), "expected ReadDir rule for home directory %s", homeDir)
+}
+
 func TestFsRules_FullDiskReadAccess(t *testing.T) {
 	rules, err := fsRules(context.Background(), sandbox.Policy{
 		Filesystem: sandbox.Filesystem{
