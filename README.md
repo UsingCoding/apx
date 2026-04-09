@@ -29,6 +29,11 @@ Without it most apps will be unable to start or work correctly
 * Home: access for specific paths, not for all dir. If set `home` in `sandboxes.policy.fs` APX gives access to home dir.
 But only for specific paths. It reads all paths and passes it explicitly to sandbox implementation.
   * Excluded dirs: `.ssh`, `.kube`.
+  * By default, APX allows processes to list $HOME (can be disabled with `disallowList`). It useful for processes that
+  want to list all paths to it absolute location.
+    * On linux, it leads to be able to list denied list like `.ssh`, `.kube`.
+    Process even can `cd` into those dirs, but can't read any files there.
+    * On darwin, paths under $HOME can't be `cd`
 * APX configuration portable for all [supported sandboxes](#supported-sandboxes).
 But Linux Landlock there are more limitations (like lack of support `denyPaths`).
 Unsupported cases not causes to crash of APX - you can see them in `apx -v` in logs
@@ -72,6 +77,8 @@ denyPaths = [
 [sandboxes.policy.fs.home]
 # Full $HOME access
 allPaths = true
+# Blocks listing of $HOME
+disallowList = true
 # Do not use default denyList
 skipDefaultDenyList = true
 # Forbid specific paths under $HOME
